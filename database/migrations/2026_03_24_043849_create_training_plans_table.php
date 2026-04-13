@@ -14,9 +14,7 @@ return new class extends Migration
             $table->text('descripcion')->nullable();
             $table->enum('tipo', ['asistido', 'libre'])->default('libre');
             $table->integer('dias_semana')->default(3)->comment('Días de entrenamiento por semana');
-            $table->foreignId('trainer_id')
-                ->constrained('trainers')
-                ->restrictOnDelete();
+            $table->foreignId('trainer_id')->nullable()->constrained('trainers');
             $table->boolean('activo')->default(true);
             $table->timestamps();
         });

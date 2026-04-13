@@ -148,15 +148,41 @@
     font-style: normal !important;
 }
 
-/* ─── Fix autofill del browser ─── */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0px 1000px #111827 inset !important;
-    -webkit-text-fill-color: #f9fafb !important;
-    caret-color: #f9fafb !important;
-    transition: background-color 5000s ease-in-out 0s !important;
+/* ─── Print: ocultar sidebar y mostrar solo contenido ─── */
+@media print {
+    .v-navigation-drawer,
+    .v-btn,
+    .v-select,
+    .v-text-field {
+        display: none !important;
+    }
+
+    .v-main {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .v-card {
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+        break-inside: avoid;
+    }
+
+    body, .v-application {
+        background: white !important;
+    }
+
+    .text-white, .text-gray-400, .text-gray-300 {
+        color: #111 !important;
+    }
+
+    .text-red-400, .text-yellow-400, .text-blue-400 {
+        color: #111 !important;
+    }
+
+    * {
+        color: #111 !important;
+    }
 }
 
 /* Scrollbar */
