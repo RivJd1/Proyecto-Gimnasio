@@ -14,7 +14,7 @@ return new class extends Migration
                 ->constrained('memberships')
                 ->restrictOnDelete();
             $table->decimal('monto', 8, 2);
-            $table->enum('metodo_pago', ['efectivo', 'tarjeta_credito', 'tarjeta_debito']);
+            $table->enum('metodo_pago', ['efectivo', 'tarjeta']);
             $table->enum('estado', ['pagado', 'pendiente', 'vencido', 'anulado'])->default('pendiente');
             $table->date('fecha_pago')->nullable();
             $table->date('fecha_vencimiento');

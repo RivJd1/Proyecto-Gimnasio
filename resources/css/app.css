@@ -1,3 +1,157 @@
+@import '@mdi/font/css/materialdesignicons.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Forzar reset contra Tailwind Forms en elementos de Vuetify */
+.v-field__input,
+.v-field__input:focus,
+.v-field__input:hover {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    color: #f9fafb !important;
+    padding: 8px 12px !important;
+}
+
+.v-field {
+    background-color: #111827 !important;
+    border-radius: 8px !important;
+}
+
+.v-field__outline__start,
+.v-field__outline__end,
+.v-field__outline__notch {
+    border-color: #374151 !important;
+}
+
+.v-field:hover .v-field__outline__start,
+.v-field:hover .v-field__outline__end,
+.v-field:hover .v-field__outline__notch {
+    border-color: #4b5563 !important;
+}
+
+.v-field--focused .v-field__outline__start,
+.v-field--focused .v-field__outline__end,
+.v-field--focused .v-field__outline__notch {
+    border-color: #22c55e !important;
+    border-width: 2px !important;
+}
+
+.v-field__input::placeholder {
+    color: #6b7280 !important;
+    opacity: 1 !important;
+}
+
+.v-label {
+    color: #9ca3af !important;
+    font-size: 13px !important;
+}
+
+.v-field--focused .v-label {
+    color: #22c55e !important;
+}
+
+/* Select dropdown */
+.v-overlay__content .v-list {
+    background-color: #1f2937 !important;
+    border: 1px solid #374151 !important;
+    border-radius: 8px !important;
+}
+
+.v-list-item:hover {
+    background-color: #374151 !important;
+}
+
+.v-list-item--active {
+    background-color: #14532d !important;
+}
+
+.v-list-item-title {
+    color: #f9fafb !important;
+    font-size: 14px !important;
+}
+
+/* Stepper */
+.v-stepper {
+    background-color: transparent !important;
+}
+
+.v-stepper__header {
+    background-color: #1f2937 !important;
+    border-radius: 10px !important;
+    padding: 8px 16px !important;
+    box-shadow: none !important;
+}
+
+.v-stepper-item__title {
+    color: #9ca3af !important;
+    font-size: 13px !important;
+}
+
+.v-stepper-item--selected .v-stepper-item__title {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+}
+
+.v-stepper-item--complete .v-stepper-item__title {
+    color: #22c55e !important;
+}
+
+/* Data table */
+.v-data-table {
+    background-color: transparent !important;
+}
+
+.v-data-table__thead tr th {
+    background-color: #111827 !important;
+    color: #9ca3af !important;
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    border-bottom: 1px solid #374151 !important;
+}
+
+.v-data-table__tbody tr td {
+    border-bottom: 1px solid #1f2937 !important;
+    color: #d1d5db !important;
+}
+
+.v-data-table__tbody tr:hover td {
+    background-color: #1f2937 !important;
+}
+
+/* Botones */
+/* ─── Botones con más padding ─── */
+.v-btn {
+    padding: 0 20px !important;
+    min-height: 40px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.01em !important;
+    text-transform: none !important;
+}
+
+.v-btn.v-btn--size-small {
+    padding: 0 14px !important;
+    min-height: 32px !important;
+}
+
+.v-btn.v-btn--size-x-small {
+    padding: 0 10px !important;
+    min-height: 26px !important;
+}
+
+/* Iconos MDI */
+.mdi:before {
+    font-family: "Material Design Icons" !important;
+    font-style: normal !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #111827; }
+::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+

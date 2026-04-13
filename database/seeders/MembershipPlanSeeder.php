@@ -2,16 +2,38 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\MembershipPlan;
 use Illuminate\Database\Seeder;
 
 class MembershipPlanSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        //
+        MembershipPlan::create([
+            'nombre'        => 'Plan Mensual',
+            'descripcion'   => 'Acceso completo al gimnasio por 30 días.',
+            'precio'        => 500.00,
+            'duracion_dias' => 30,
+            'tipo'          => 'mensual',
+            'activo'        => true,
+        ]);
+
+        MembershipPlan::create([
+            'nombre'        => 'Plan Semestral',
+            'descripcion'   => 'Acceso completo por 6 meses con descuento.',
+            'precio'        => 2500.00,
+            'duracion_dias' => 180,
+            'tipo'          => 'semestral',
+            'activo'        => true,
+        ]);
+
+        MembershipPlan::create([
+            'nombre'        => 'Plan Anual',
+            'descripcion'   => 'Acceso completo por un año, mejor precio.',
+            'precio'        => 4500.00,
+            'duracion_dias' => 365,
+            'tipo'          => 'anual',
+            'activo'        => true,
+        ]);
     }
 }
