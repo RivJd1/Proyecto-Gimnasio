@@ -124,7 +124,6 @@
 }
 
 /* Botones */
-/* ─── Botones con más padding ─── */
 .v-btn {
     padding: 0 20px !important;
     min-height: 40px !important;
@@ -147,6 +146,17 @@
 .mdi:before {
     font-family: "Material Design Icons" !important;
     font-style: normal !important;
+}
+
+/* ─── Fix autofill del browser ─── */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0px 1000px #111827 inset !important;
+    -webkit-text-fill-color: #f9fafb !important;
+    caret-color: #f9fafb !important;
+    transition: background-color 5000s ease-in-out 0s !important;
 }
 
 /* Scrollbar */

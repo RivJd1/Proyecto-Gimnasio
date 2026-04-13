@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 
 class MembershipPlanSeeder extends Seeder
 {
-    public function run(): void
+    /*public function run(): void
     {
         MembershipPlan::create([
             'nombre'        => 'Plan Mensual',
@@ -35,5 +35,10 @@ class MembershipPlanSeeder extends Seeder
             'tipo'          => 'anual',
             'activo'        => true,
         ]);
-    }
+    }*/
+
+//    public function run(): void {
+//        MembershipPlan::create(['nombre' => 'Plan Estándar', 'precio' => 350, 'duracion_dias' => 30, 'tipo' => 'mensual', 'activo' => true]);
+//        MembershipPlan::create(['nombre' => 'Plan Black', 'precio' => 600, 'duracion_dias' => 30, 'tipo' => 'mensual', 'activo' => true]); // [cite: 70, 71]
+//    }
 }

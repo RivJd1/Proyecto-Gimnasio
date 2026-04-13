@@ -20,4 +20,12 @@ class DatabaseSeeder extends Seeder
             SupportProviderSeeder::class,
         ]);
     }
+
+    /*public function run(): void {
+        $this->call([
+            UserSeeder::class,
+            MembershipPlanSeeder::class,
+            ClientSeeder::class,
+        ]);
+    }*/
 }

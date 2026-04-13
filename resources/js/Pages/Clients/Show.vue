@@ -1,9 +1,11 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 const props = defineProps({ client: Object });
+
+const deactivateDialog = ref(false);
 
 const activeMembership = computed(() =>
     props.client.memberships?.find(m => m.estado === 'activa') ?? null
@@ -14,12 +16,12 @@ const overduePayments = computed(() =>
         .filter(p => p.estado === 'vencido') ?? []
 );
 
+
 const allPayments = computed(() =>
     props.client.memberships?.flatMap(m =>
         (m.payments ?? []).map(p => ({ ...p, plan: m.plan?.nombre }))
     ).sort((a, b) => new Date(b.fecha_pago ?? b.created_at) - new Date(a.fecha_pago ?? a.created_at)) ?? []
 );
-
 const estadoMembresiaColor = (estado) => ({
     activa:  'success',
     vencida: 'error',
@@ -59,6 +61,16 @@ const estadoPagoColor = (estado) => ({
                 :href="route('clients.edit', client.id)"
             >
                 Editar
+            </v-btn>
+
+            <v-btn
+                v-if="client.estado === 'activo'"
+                color="error"
+                variant="tonal"
+                prepend-icon="mdi-account-off"
+                @click="deactivateDialog = true"
+            >
+                Desactivar
             </v-btn>
         </div>
 
@@ -213,5 +225,30 @@ const estadoPagoColor = (estado) => ({
                 </v-card>
             </v-col>
         </v-row>
+        <v-dialog v-model="deactivateDialog" max-width="420">
+            <v-card color="#1f2937" rounded="lg">
+                <v-card-title class="pa-5 pb-2 flex items-center gap-2">
+                    <v-icon color="error">mdi-alert</v-icon>
+                    <span class="text-white">Desactivar cliente</span>
+                </v-card-title>
+                <v-card-text class="pa-5 pt-0 text-gray-300">
+                    ¿Está seguro que desea desactivar a
+                    <strong class="text-white">{{ client.nombre }} {{ client.apellido }}</strong>?
+                    Perderá acceso activo en el sistema.
+                </v-card-text>
+                <v-card-actions class="pa-5 pt-0">
+                    <v-spacer />
+                    <v-btn variant="tonal" color="secondary" @click="deactivateDialog = false">
+                        Cancelar
+                    </v-btn>
+                    <v-btn
+                        color="error"
+                        @click="router.delete(route('clients.destroy', client.id))"
+                    >
+                        Desactivar
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </AuthenticatedLayout>
 </template>

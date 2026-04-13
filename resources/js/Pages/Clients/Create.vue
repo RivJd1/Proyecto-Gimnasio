@@ -61,14 +61,35 @@ const planTypeLabel = (tipo) => ({
             </div>
 
             <!-- Stepper -->
-            <v-stepper
-                v-model="step"
-                :items="['Datos personales', 'Plan de membresía', 'Pago inicial', 'Confirmación']"
-                hide-actions
-                color="primary"
-                bg-color="#111827"
-                class="mb-6"
-            />
+            <div class="flex items-center mb-6 px-2 py-4 rounded-xl" style="background:#1e293b">
+                <template v-for="(label, i) in ['Datos personales', 'Plan de membresía', 'Pago inicial', 'Confirmación']" :key="i">
+                    <div class="flex items-center gap-2 flex-1 justify-center">
+                        <div
+                            class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+                            :style="step === i+1
+                    ? 'background:#22c55e; color:#fff'
+                    : step > i+1
+                        ? 'background:#14532d; color:#22c55e'
+                        : 'background:#1e293b; color:#475569; border:1px solid #334155'"
+                        >
+                            <v-icon v-if="step > i+1" size="14">mdi-check</v-icon>
+                            <span v-else>{{ i+1 }}</span>
+                        </div>
+                        <span
+                            class="text-xs font-medium hidden sm:block"
+                            :style="step === i+1 ? 'color:#fff' : step > i+1 ? 'color:#22c55e' : 'color:#475569'"
+                        >
+                {{ label }}
+            </span>
+
+                    </div>
+                    <div
+                        v-if="i < 3"
+                        class="h-px flex-shrink-0 w-6"
+                        style="background:#334155"
+                    />
+                </template>
+            </div>
 
             <!-- Card contenedor -->
             <v-card color="#1f2937" rounded="lg" elevation="0" class="pa-6">

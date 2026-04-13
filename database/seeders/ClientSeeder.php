@@ -5,10 +5,11 @@ namespace Database\Seeders;
 use App\Models\Client;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use App\Models\MembershipPlan;
 
 class ClientSeeder extends Seeder
 {
-    public function run(): void
+    /*public function run(): void
     {
         $receptionist = User::where('role', 'receptionist')->first();
 
@@ -26,5 +27,31 @@ class ClientSeeder extends Seeder
         foreach ($clients as $data) {
             Client::create(array_merge($data, ['user_id' => $receptionist->id]));
         }
+    }*/
+    public function run(): void {
+        $plan = MembershipPlan::first(); //
+        $staff = User::where('role', 'receptionist')->first(); // [cite: 122]
+
+        Client::factory(30)->create(['user_id' => $staff->id])->each(function ($cliente) use ($plan, $staff) {
+
+            $membresia = $cliente->memberships()->create([
+                'membership_plan_id' => $plan->id,
+                'fecha_inicio' => now(),
+                'fecha_fin' => now()->addDays($plan->duracion_dias),
+                'estado' => 'activa',
+                'user_id' => $staff->id
+            ]); // [cite: 30, 60, 63, 64]
+
+
+            $membresia->payments()->create([
+                'monto' => $plan->precio,
+                'metodo_pago' => 'tarjeta',
+                'estado' => 'pagado',
+                'fecha_pago' => now(),
+                'fecha_vencimiento' => now()->addDays($plan->duracion_dias),
+                'user_id' => $staff->id,
+                'referencia' => 'SEED-' . rand(1000, 9999)
+            ]); // [cite: 65, 75, 78, 79]
+        });
     }
 }

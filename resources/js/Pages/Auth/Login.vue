@@ -72,7 +72,6 @@ const submit = () => {
                         <input
                             v-model="form.email"
                             type="email"
-                            placeholder="correo@gimnasio.com"
                             autofocus
                             autocomplete="username"
                             class="w-full px-4 py-3 rounded-lg text-sm text-white placeholder-slate-500 outline-none transition-all"
@@ -94,7 +93,6 @@ const submit = () => {
                             <input
                                 v-model="form.password"
                                 :type="showPassword ? 'text' : 'password'"
-                                placeholder="••••••••"
                                 autocomplete="current-password"
                                 class="w-full px-4 py-3 rounded-lg text-sm outline-none transition-all pr-11"
                                 style="background: #0f172a; border: 1px solid #1e293b; color: #f1f5f9"
@@ -108,9 +106,6 @@ const submit = () => {
                                 style="color: #475569"
                                 @click="showPassword = !showPassword"
                             >
-                                <v-icon size="18">
-                                    {{ showPassword ? 'mdi-eye-off' : 'mdi-eye' }}
-                                </v-icon>
                             </button>
                         </div>
                         <p v-if="form.errors.password" class="text-red-400 text-xs mt-1.5">
