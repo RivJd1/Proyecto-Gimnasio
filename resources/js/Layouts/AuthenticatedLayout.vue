@@ -1,198 +1,131 @@
 <script setup>
-import { ref } from 'vue';
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownLink from '@/Components/DropdownLink.vue';
-import NavLink from '@/Components/NavLink.vue';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import FlashMessage from '@/Components/FlashMessage.vue';
 
-const showingNavigationDropdown = ref(false);
+const page = usePage();
+const user = computed(() => page.props.auth.user);
+const isAdmin = computed(() => user.value.role === 'admin');
+const sidebarOpen = ref(true);
+
+const navItems = computed(() => {
+    const items = [
+        { label: 'Panel General',           icon: 'mdi-view-dashboard-outline', route: 'dashboard',              roles: ['admin', 'receptionist', 'trainer'] },
+        { label: 'Nuevo Cliente',           icon: 'mdi-account-plus-outline',   route: 'clients.create',         roles: ['admin', 'receptionist'] },
+        { label: 'Consulta de Clientes',    icon: 'mdi-account-search-outline', route: 'clients.index',          roles: ['admin', 'receptionist'] },
+        { label: 'Cobranza',                icon: 'mdi-cash-register',          route: 'payments.index',         roles: ['admin', 'receptionist'] },
+        { label: 'Planes de Entrenamiento', icon: 'mdi-dumbbell',               route: 'training-plans.index',   roles: ['admin', 'trainer'] },
+        { label: 'Asignaciones',            icon: 'mdi-clipboard-account',      route: 'assignments.index',      roles: ['admin', 'trainer'] },
+        { label: 'Reportes Financieros',    icon: 'mdi-chart-bar',              route: 'admin.finances.index',   roles: ['admin'] },
+        { label: 'Gestión Empleados',       icon: 'mdi-account-group-outline',  route: 'admin.users.index',      roles: ['admin'] },
+        { label: 'Directorio Soporte',      icon: 'mdi-wrench-outline',         route: 'support-providers.index',roles: ['admin', 'receptionist'] },
+    ];
+    return items.filter(item => item.roles.includes(user.value.role));
+});
+
+const roleLabel = computed(() => ({
+    admin:        'Administrador',
+    receptionist: 'Recepcionista',
+    trainer:      'Entrenador',
+}[user.value.role] ?? user.value.role));
+
+const roleColor = computed(() => ({
+    admin:        'warning',
+    receptionist: 'success',
+    trainer:      'info',
+}[user.value.role] ?? 'secondary'));
 </script>
 
 <template>
-    <div>
-        <div class="min-h-screen bg-gray-100">
-            <nav
-                class="border-b border-gray-100 bg-white"
-            >
-                <!-- Primary Navigation Menu -->
-                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div class="flex h-16 justify-between">
-                        <div class="flex">
-                            <!-- Logo -->
-                            <div class="flex shrink-0 items-center">
-                                <Link :href="route('dashboard')">
-                                    <ApplicationLogo
-                                        class="block h-9 w-auto fill-current text-gray-800"
-                                    />
-                                </Link>
-                            </div>
-
-                            <!-- Navigation Links -->
-                            <div
-                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
-                            >
-                                <NavLink
-                                    :href="route('dashboard')"
-                                    :active="route().current('dashboard')"
-                                >
-                                    Dashboard
-                                </NavLink>
-                            </div>
-                        </div>
-
-                        <div class="hidden sm:ms-6 sm:flex sm:items-center">
-                            <!-- Settings Dropdown -->
-                            <div class="relative ms-3">
-                                <Dropdown align="right" width="48">
-                                    <template #trigger>
-                                        <span class="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
-                                            >
-                                                {{ $page.props.auth.user.name }}
-
-                                                <svg
-                                                    class="-me-0.5 ms-2 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fill-rule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clip-rule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </template>
-
-                                    <template #content>
-                                        <DropdownLink
-                                            :href="route('profile.edit')"
-                                        >
-                                            Profile
-                                        </DropdownLink>
-                                        <DropdownLink
-                                            :href="route('logout')"
-                                            method="post"
-                                            as="button"
-                                        >
-                                            Log Out
-                                        </DropdownLink>
-                                    </template>
-                                </Dropdown>
-                            </div>
-                        </div>
-
-                        <!-- Hamburger -->
-                        <div class="-me-2 flex items-center sm:hidden">
-                            <button
-                                @click="
-                                    showingNavigationDropdown =
-                                        !showingNavigationDropdown
-                                "
-                                class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
-                            >
-                                <svg
-                                    class="h-6 w-6"
-                                    stroke="currentColor"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        :class="{
-                                            hidden: showingNavigationDropdown,
-                                            'inline-flex':
-                                                !showingNavigationDropdown,
-                                        }"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        :class="{
-                                            hidden: !showingNavigationDropdown,
-                                            'inline-flex':
-                                                showingNavigationDropdown,
-                                        }"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
+    <v-app theme="dark">
+        <!-- Sidebar -->
+        <v-navigation-drawer
+            v-model="sidebarOpen"
+            permanent
+            :width="248"
+            color="#0f172a"
+            border="none"
+        >
+            <!-- Logo -->
+            <div class="px-5 py-5" style="border-bottom: 1px solid #1e293b">
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center justify-center w-9 h-9 rounded-lg" style="background: #22c55e20">
+                        <v-icon color="primary" size="20">mdi-dumbbell</v-icon>
+                    </div>
+                    <div>
+                        <div class="text-white font-semibold text-sm leading-tight">Gimnasio</div>
+                        <div class="text-xs" style="color: #64748b">Sistema de Gestión</div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Responsive Navigation Menu -->
-                <div
-                    :class="{
-                        block: showingNavigationDropdown,
-                        hidden: !showingNavigationDropdown,
-                    }"
-                    class="sm:hidden"
-                >
-                    <div class="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink
-                            :href="route('dashboard')"
-                            :active="route().current('dashboard')"
-                        >
-                            Dashboard
-                        </ResponsiveNavLink>
-                    </div>
-
-                    <!-- Responsive Settings Options -->
-                    <div
-                        class="border-t border-gray-200 pb-1 pt-4"
+            <!-- Nav Items -->
+            <div class="px-3 py-3">
+                <template v-for="item in navItems" :key="item.route">
+                    <a
+                        :href="route(item.route)"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg mb-0.5 transition-all cursor-pointer no-underline"
+                        :class="route().current(item.route)
+                            ? 'bg-green-500/10 text-green-400'
+                            : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'"
                     >
-                        <div class="px-4">
-                            <div
-                                class="text-base font-medium text-gray-800"
-                            >
-                                {{ $page.props.auth.user.name }}
-                            </div>
-                            <div class="text-sm font-medium text-gray-500">
-                                {{ $page.props.auth.user.email }}
-                            </div>
-                        </div>
+                        <v-icon :icon="item.icon" size="18" />
+                        <span class="text-sm font-medium">{{ item.label }}</span>
+                        <div
+                            v-if="route().current(item.route)"
+                            class="ml-auto w-1.5 h-1.5 rounded-full bg-green-400"
+                        />
+                    </a>
+                </template>
+            </div>
 
-                        <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.edit')">
-                                Profile
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink
-                                :href="route('logout')"
-                                method="post"
-                                as="button"
+            <!-- User info -->
+            <template #append>
+                <div class="px-4 py-4" style="border-top: 1px solid #1e293b">
+                    <div class="flex items-center gap-3 mb-3">
+                        <v-avatar
+                            size="34"
+                            class="font-bold text-white text-sm"
+                            :style="`background: #22c55e30; color: #22c55e`"
+                        >
+                            {{ user.name.charAt(0).toUpperCase() }}
+                        </v-avatar>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-white text-xs font-semibold truncate">{{ user.name }}</div>
+                            <v-chip
+                                :color="roleColor"
+                                size="x-small"
+                                variant="tonal"
+                                class="mt-0.5"
                             >
-                                Log Out
-                            </ResponsiveNavLink>
+                                {{ roleLabel }}
+                            </v-chip>
                         </div>
                     </div>
+                    <Link :href="route('logout')" method="post" as="button" class="w-full">
+                        <v-btn
+                            variant="tonal"
+                            color="error"
+                            size="small"
+                            block
+                            prepend-icon="mdi-logout"
+                            style="text-transform: none"
+                        >
+                            Cerrar Sesión
+                        </v-btn>
+                    </Link>
                 </div>
-            </nav>
+            </template>
+        </v-navigation-drawer>
 
-            <!-- Page Heading -->
-            <header
-                class="bg-white shadow"
-                v-if="$slots.header"
-            >
-                <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                    <slot name="header" />
-                </div>
-            </header>
-
-            <!-- Page Content -->
-            <main>
+        <!-- Main Content -->
+        <v-main style="background: #0f172a">
+            <div class="pa-7">
                 <slot />
-            </main>
-        </div>
-    </div>
+            </div>
+        </v-main>
+
+        <!-- Flash notifications -->
+        <FlashMessage />
+    </v-app>
 </template>

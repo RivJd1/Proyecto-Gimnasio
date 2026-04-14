@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
-    public function run(): void
+    /*public function run(): void
     {
         // Administrador
         User::create([
@@ -60,5 +60,11 @@ class UserSeeder extends Seeder
             'role'     => 'trainer',
             'active'   => true,
         ]);
+    }*/
+
+    public function run(): void {
+        User::factory()->create(['name' => 'Josue Admin', 'role' => 'admin', 'email' => 'admin@gym.com']);
+        User::factory()->create(['role' => 'receptionist', 'email' => 'recepcion@gym.com']);
+        User::factory(8)->create(['role' => 'trainer']); // [cite: 113, 121, 122]
     }
 }

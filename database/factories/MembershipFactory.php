@@ -10,15 +10,14 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class MembershipFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
-    {
+    public function definition(): array {
         return [
-            //
+            'client_id' => Client::factory(),
+            'membership_plan_id' => MembershipPlan::factory(),
+            'fecha_inicio' => now(),
+            'fecha_fin' => now()->addDays(30),
+            'estado' => 'activa',
+            'user_id' => User::factory(), // Gestión [cite: 60, 64]
         ];
     }
 }
