@@ -41,6 +41,8 @@ Route::middleware(['auth'])->group(function () {
             Route::resource('users', UserController::class);
             Route::resource('trainers', TrainerController::class);
             Route::get('finances', [FinanceController::class, 'index'])->name('finances.index');
+            Route::patch('users/{user}/reactivate', [UserController::class, 'reactivate'])
+                ->name('users.reactivate');
         });
     });
 

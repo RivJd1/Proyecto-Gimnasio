@@ -14,6 +14,12 @@ const deactivateTarget = ref(null);
 const roleLabel = { admin: 'Administrador', receptionist: 'Recepcionista', trainer: 'Entrenador' };
 const roleColor = { admin: 'warning', receptionist: 'info', trainer: 'success' };
 
+const reactivate = (user) => {
+    useForm({}).patch(route('admin.users.reactivate', user.id), {
+        onSuccess: () => {},
+    });
+};
+
 const form = useForm({
     name:                  '',
     email:                 '',
@@ -119,6 +125,16 @@ const roleItems = [
                         variant="text"
                         color="error"
                         @click="openDeactivate(item)"
+                    />
+
+                    <v-btn
+                        v-else
+                        icon="mdi-account-check"
+                        size="small"
+                        variant="text"
+                        color="success"
+                        title="Reactivar empleado"
+                        @click="reactivate(item)"
                     />
                 </template>
             </v-data-table>

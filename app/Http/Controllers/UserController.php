@@ -71,4 +71,11 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')
             ->with('success', 'Empleado desactivado correctamente.');
     }
+
+    public function reactivate(User $user): RedirectResponse
+    {
+        $user->update(['active' => true]);
+        return redirect()->route('admin.users.index')
+            ->with('success', 'Empleado reactivado correctamente.');
+    }
 }
