@@ -15,14 +15,20 @@ class PaymentController extends Controller
 {
     public function index(): Response
     {
-        $clients = Client::with(['activeMembership.plan', 'memberships.payments'])
+        $clients = Client::with(['activeMembership.plan', 'memberships.plan', 'memberships.payments'])
             ->where('estado', 'activo')
             ->orderBy('nombre')
             ->get()
             ->map(function ($client) {
-                $membership = $client->activeMembership;
+                // Busca activa primero, si no la más reciente
+                $membership = $client->activeMembership
+                    ?? $client->memberships->sortByDesc('fecha_fin')->first();
+
                 $overduePayment = $membership
-                    ? $membership->payments->where('estado', 'vencido')->first()
+                    ? $membership->payments
+                        ->whereIn('estado', ['vencido', 'pendiente'])
+                        ->filter(fn($p) => $p->fecha_vencimiento && $p->fecha_vencimiento < now()->toDateString())
+                        ->first()
                     : null;
 
                 $diasAtraso = 0;
@@ -62,18 +68,39 @@ class PaymentController extends Controller
 
         $membership = Membership::with('plan')->findOrFail($request->membership_id);
 
-        // Si hay pago vencido, marcarlo como pagado
         if ($request->payment_id) {
-            Payment::findOrFail($request->payment_id)->update([
+            // Marcar pago vencido como pagado
+            $pago = Payment::findOrFail($request->payment_id);
+            $pago->update([
                 'estado'      => 'pagado',
                 'fecha_pago'  => Carbon::today(),
                 'metodo_pago' => $request->metodo_pago,
                 'user_id'     => auth()->id(),
             ]);
+
+            // Actualizar fecha_fin de membresía desde hoy
+            $nuevaFechaFin = Carbon::today()->addDays($membership->plan->duracion_dias);
+            $membership->update([
+                'estado'    => 'activa',
+                'fecha_fin' => $nuevaFechaFin,
+            ]);
+
+            // Crear siguiente pago pendiente
+            Payment::create([
+                'membership_id'     => $membership->id,
+                'monto'             => $membership->plan->precio,
+                'metodo_pago'       => $request->metodo_pago,
+                'estado'            => 'pendiente',
+                'fecha_pago'        => null,
+                'fecha_vencimiento' => $nuevaFechaFin,
+                'referencia'        => 'REF-' . strtoupper(uniqid()),
+                'user_id'           => auth()->id(),
+            ]);
+
         } else {
-            // Nuevo pago de renovación
-            $fechaInicio = Carbon::today();
-            $fechaFin    = $fechaInicio->copy()->addDays($membership->plan->duracion_dias);
+            // Renovación normal — registrar pago y crear siguiente pendiente
+            $fechaInicio   = Carbon::today();
+            $nuevaFechaFin = $fechaInicio->copy()->addDays($membership->plan->duracion_dias);
 
             Payment::create([
                 'membership_id'     => $membership->id,
@@ -81,15 +108,26 @@ class PaymentController extends Controller
                 'metodo_pago'       => $request->metodo_pago,
                 'estado'            => 'pagado',
                 'fecha_pago'        => $fechaInicio,
-                'fecha_vencimiento' => $fechaFin,
+                'fecha_vencimiento' => $nuevaFechaFin,
                 'referencia'        => 'REF-' . strtoupper(uniqid()),
                 'user_id'           => auth()->id(),
             ]);
 
-            // Actualizar fecha_fin de la membresía
             $membership->update([
-                'fecha_fin' => $fechaFin,
+                'fecha_fin' => $nuevaFechaFin,
                 'estado'    => 'activa',
+            ]);
+
+            // Crear siguiente pago pendiente
+            Payment::create([
+                'membership_id'     => $membership->id,
+                'monto'             => $membership->plan->precio,
+                'metodo_pago'       => $request->metodo_pago,
+                'estado'            => 'pendiente',
+                'fecha_pago'        => null,
+                'fecha_vencimiento' => $nuevaFechaFin,
+                'referencia'        => 'REF-NEXT-' . strtoupper(uniqid()),
+                'user_id'           => auth()->id(),
             ]);
         }
 

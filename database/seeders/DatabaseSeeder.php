@@ -14,7 +14,6 @@ class DatabaseSeeder extends Seeder
             ClientSeeder::class,
             TrainerSeeder::class,
             MembershipSeeder::class,
-            PaymentSeeder::class,
             TrainingPlanSeeder::class,
             PlanAssignmentSeeder::class,
             SupportProviderSeeder::class,

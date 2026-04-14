@@ -7,13 +7,15 @@ use App\Models\Membership;
 use App\Models\Payment;
 use Inertia\Inertia;
 use Inertia\Response;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
     public function index(): Response
     {
         // Clientes con pagos vencidos
-        $overduePayments = Payment::where('estado', 'vencido')
+        $overduePayments = Payment::whereIn('estado', ['vencido', 'pendiente'])
+            ->where('fecha_vencimiento', '<', Carbon::today())
             ->with(['membership.client', 'membership.plan'])
             ->get()
             ->map(function ($payment) {
